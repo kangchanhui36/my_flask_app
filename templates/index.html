@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>타율 계산기</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 400px;
+            margin: auto;
+        }
+        input, button {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #27ae60;
+        }
+        p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>타율 계산기</h1>
+    <div class="container">
+        <p>안타와 타수를 입력하세요:</p>
+        <input type="number" id="hits" placeholder="안타 수" min="0" required>
+        <input type="number" id="at_bats" placeholder="타수" min="0" required>
+        
+        <p>볼넷 수:</p>
+        <input type="number" id="walks" placeholder="볼넷 수" min="0" value="0">
+        
+        <p>몸에 맞는 공 수:</p>
+        <input type="number" id="hit_by_pitch" placeholder="몸에 맞는 공 수" min="0" value="0">
+        
+        <p>2루타 수:</p>
+        <input type="number" id="doubles" placeholder="2루타 수" min="0" value="0">
+        
+        <p>3루타 수:</p>
+        <input type="number" id="triples" placeholder="3루타 수" min="0" value="0">
+        
+        <p>홈런 수:</p>
+        <input type="number" id="home_runs" placeholder="홈런 수" min="0" value="0">
+        
+        <button id="calculateButton">계산하기</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("calculateButton").addEventListener("click", async () => {
+                const hits = parseInt(document.getElementById("hits").value);
+                const atBats = parseInt(document.getElementById("at_bats").value);
+                const walks = parseInt(document.getElementById("walks").value);
+                const hitByPitch = parseInt(document.getElementById("hit_by_pitch").value);
+                const doubles = parseInt(document.getElementById("doubles").value);
+                const triples = parseInt(document.getElementById("triples").value);
+                const homeRuns = parseInt(document.getElementById("home_runs").value);
+
+                // 음수 값 검증
+                if (hits < 0 || atBats < 0 || walks < 0 || hitByPitch < 0 || doubles < 0 || triples < 0 || homeRuns < 0) {
+                    document.getElementById("result").textContent = "모든 입력 값은 0 이상의 숫자여야 합니다!";
+                    return;
+                }
+
+                if (isNaN(hits) || isNaN(atBats) || hits === '' || atBats === '') {
+                    document.getElementById("result").textContent = "안타와 타수를 모두 입력하세요!";
+                    return;
+                }
+
+                try {
+                    const response = await fetch("/calculate", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            hits: hits,
+                            at_bats: atBats,
+                            walks: walks,
+                            hit_by_pitch: hitByPitch,
+                            doubles: doubles,
+                            triples: triples,
+                            home_runs: homeRuns
+                        })
+                    });
+
+                    const resultDiv = document.getElementById("result");
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        resultDiv.textContent = `타율: ${data.batting_average}, 출루율: ${data.obp}, 장타율: ${data.slg}`;
+                    } else {
+                        const error = await response.json();
+                        resultDiv.textContent = `오류: ${error.error}`;
+                    }
+                } catch (error) {
+                    console.error(error);
+                    document.getElementById("result").textContent = "서버와 통신에 실패했습니다.";
+                }
+            });
+        });
+    </script>
+</body>
+</html>
