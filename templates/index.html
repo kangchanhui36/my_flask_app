@@ -87,13 +87,13 @@
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("calculateButton").addEventListener("click", async () => {
-                const hits = parseInt(document.getElementById("hits").value);
-                const atBats = parseInt(document.getElementById("at_bats").value);
-                const walks = parseInt(document.getElementById("walks").value);
-                const hitByPitch = parseInt(document.getElementById("hit_by_pitch").value);
-                const doubles = parseInt(document.getElementById("doubles").value);
-                const triples = parseInt(document.getElementById("triples").value);
-                const homeRuns = parseInt(document.getElementById("home_runs").value);
+                const hits = parseInt(document.getElementById("hits").value) || 0;
+                const atBats = parseInt(document.getElementById("at_bats").value) || 0;
+                const walks = parseInt(document.getElementById("walks").value) || 0;
+                const hitByPitch = parseInt(document.getElementById("hit_by_pitch").value) || 0;
+                const doubles = parseInt(document.getElementById("doubles").value) || 0;
+                const triples = parseInt(document.getElementById("triples").value) || 0;
+                const homeRuns = parseInt(document.getElementById("home_runs").value) || 0;
 
                 // 음수 값 검증
                 if (hits < 0 || atBats < 0 || walks < 0 || hitByPitch < 0 || doubles < 0 || triples < 0 || homeRuns < 0) {

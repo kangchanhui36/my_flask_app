@@ -23,12 +23,15 @@ def calculate():
         if at_bats == 0:
             return jsonify({"error": "타수는 0일 수 없습니다."}), 400
 
+        # 1루타 계산 (안타 수 - 2루타 - 3루타 - 홈런)
+        singles = hits - (doubles + triples + home_runs)
+
         # 타율 계산
         batting_average = hits / at_bats
         # 출루율 계산
         obp = (hits + walks + hit_by_pitch) / (at_bats + walks + hit_by_pitch)
         # 장타율 계산
-        total_bases = hits + doubles * 2 + triples * 3 + home_runs * 4
+        total_bases = singles + doubles * 2 + triples * 3 + home_runs * 4
         slg = total_bases / at_bats
 
         return jsonify({
